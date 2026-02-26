@@ -1,0 +1,1726 @@
+﻿<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Storm Z - The Apocalypse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --toxic-green: #39FF14;
+            --dark-green: #0a3d0a;
+            --pure-black: #0a0a0a;
+            --off-black: #1a1a1a;
+            --gray: #2a2a2a;
+            --white: #ffffff;
+            --light-gray: #cccccc;
+            --blood-red: #8B0000;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--pure-black);
+            color: var(--white);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--pure-black);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+            .loading-screen.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--gray);
+            border-top: 3px solid var(--toxic-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        .loading-text {
+            color: var(--toxic-green);
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Game Title Banner */
+        .game-title-banner {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 999;
+            background: rgba(10, 10, 10, 0.9);
+            padding: 0.8rem 2rem;
+            border: 2px solid var(--toxic-green);
+            border-radius: 5px;
+            backdrop-filter: blur(10px);
+            animation: titleFadeIn 1s ease, titleFloat 3s ease-in-out infinite 1s;
+        }
+
+        @keyframes titleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes titleFloat {
+            0%, 100% {
+                transform: translateX(-50%) translateY(0px);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+
+        .game-title-banner h1 {
+            font-size: 2rem;
+            color: var(--toxic-green);
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.8);
+            letter-spacing: 3px;
+            margin: 0;
+        }
+
+        .game-subtitle {
+            font-size: 0.9rem;
+            color: var(--light-gray);
+            text-align: center;
+            margin-top: 0.3rem;
+            letter-spacing: 2px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem 5%;
+            z-index: 1000;
+            border-bottom: 1px solid var(--dark-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            nav ul {
+                display: flex;
+                justify-content: center;
+                gap: 2.5rem;
+                list-style: none;
+                margin: 0 auto;
+                align-items: center;
+            }
+
+            nav a {
+                color: var(--light-gray);
+                text-decoration: none;
+                font-size: 0.95rem;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                transition: all 0.3s ease;
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+                nav a::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -5px;
+                    left: 0;
+                    width: 0;
+                    height: 2px;
+                    background: var(--toxic-green);
+                    transition: width 0.3s ease;
+                }
+
+                nav a:hover {
+                    color: var(--white);
+                }
+
+                    nav a:hover::after {
+                        width: 100%;
+                    }
+
+        .nav-emoji {
+            font-size: 1.2rem;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--gray);
+            color: var(--light-gray);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+            .lang-btn:hover {
+                border-color: var(--toxic-green);
+                color: var(--white);
+            }
+
+            .lang-btn.active {
+                background: var(--toxic-green);
+                border-color: var(--toxic-green);
+                color: var(--pure-black);
+            }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 1001;
+            padding: 5px;
+        }
+
+            .hamburger span {
+                width: 25px;
+                height: 3px;
+                background: var(--white);
+                margin: 3px 0;
+                transition: all 0.3s ease;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translate(9px, 9px);
+                background: var(--toxic-green);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translate(8px, -8px);
+                background: var(--toxic-green);
+            }
+
+        .mobile-menu {
+            display: none;
+        }
+
+            .mobile-menu.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 70%;
+                max-width: 300px;
+                height: 100vh;
+                background: rgba(10, 10, 10, 0.98);
+                backdrop-filter: blur(20px);
+                border-right: 1px solid var(--toxic-green);
+                padding: 6rem 2rem 2rem 2rem;
+                z-index: 999;
+                overflow-y: auto;
+                animation: slideIn 0.3s ease;
+            }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .mobile-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .mobile-menu li {
+            margin-bottom: 0.8rem;
+        }
+
+        .mobile-menu a {
+            color: var(--light-gray);
+            text-decoration: none;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 300;
+            padding: 0.5rem 0;
+        }
+
+            .mobile-menu a:hover {
+                color: var(--toxic-green);
+                transform: translateX(5px);
+            }
+
+        .mobile-lang {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(57, 255, 20, 0.3);
+        }
+
+            .mobile-lang .lang-btn {
+                width: 100%;
+                margin-bottom: 0.6rem;
+                padding: 0.7rem;
+                font-size: 0.85rem;
+                font-weight: 300;
+                letter-spacing: 1px;
+            }
+
+        .menu-overlay {
+            display: none;
+        }
+
+            .menu-overlay.active {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 998;
+            }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: var(--pure-black);
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('images/menu.png') center/cover no-repeat;
+            filter: brightness(0.3) contrast(1.2);
+            animation: slowZoom 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes slowZoom {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(57, 255, 20, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(57, 255, 20, 0.3) 0%, transparent 50%), linear-gradient(180deg, transparent 0%, rgba(10, 10, 10, 0.8) 100%);
+            animation: greenPulse 4s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes greenPulse {
+            0%, 100% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .logo-container {
+            text-align: center;
+            z-index: 2;
+            animation: fadeInDown 1.5s ease;
+            position: relative;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .main-logo {
+            max-width: 800px;
+            width: 80%;
+            height: 400px;
+            filter: drop-shadow(0 0 40px rgba(57, 255, 20, 0.9)) drop-shadow(0 10px 30px rgba(0, 0, 0, 0.8));
+            animation: logoFloat 3s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .main-logo:hover {
+            filter: drop-shadow(0 0 60px rgba(57, 255, 20, 1)) drop-shadow(0 15px 40px rgba(0, 0, 0, 1));
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            color: var(--light-gray);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-top: 2rem;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .cta-buttons {
+            margin-top: 3rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 3rem;
+            border: 2px solid var(--toxic-green);
+            background: rgba(57, 255, 20, 0.1);
+            color: var(--white);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: var(--toxic-green);
+                transition: left 0.3s ease;
+                z-index: -1;
+            }
+
+            .btn:hover::before {
+                left: 0;
+            }
+
+            .btn:hover {
+                color: var(--pure-black);
+                box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
+            }
+
+        .btn-primary {
+            background: var(--toxic-green);
+            color: var(--pure-black);
+            font-weight: bold;
+            animation: btnPulse 2s ease-in-out infinite;
+        }
+
+            .btn-primary::before {
+                background: var(--dark-green);
+            }
+
+            .btn-primary:hover {
+                color: var(--toxic-green);
+                box-shadow: 0 0 30px rgba(57, 255, 20, 0.8);
+            }
+
+        @keyframes btnPulse {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(57, 255, 20, 0.8);
+            }
+        }
+
+        /* Sections */
+        section {
+            padding: 8rem 10%;
+            position: relative;
+        }
+
+            section:nth-child(even) {
+                background: var(--off-black);
+            }
+
+        h2 {
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            letter-spacing: 5px;
+            position: relative;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+            h2::after {
+                content: '';
+                position: absolute;
+                bottom: -10px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 100px;
+                height: 3px;
+                background: var(--toxic-green);
+            }
+
+        .section-emoji {
+            font-size: 3rem;
+        }
+
+        /* Updates Section */
+        .updates-banner {
+            background: linear-gradient(135deg, var(--blood-red) 0%, var(--dark-green) 100%);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid var(--toxic-green);
+            margin: 2rem auto 4rem;
+            max-width: 900px;
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
+            animation: updatePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes updatePulse {
+            0%, 100% {
+                box-shadow: 0 0 30px rgba(57, 255, 20, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 50px rgba(57, 255, 20, 0.6);
+            }
+        }
+
+        .update-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .update-badge {
+            background: var(--toxic-green);
+            color: var(--pure-black);
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .update-content {
+            color: var(--white);
+        }
+
+            .update-content h3 {
+                color: var(--toxic-green);
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+        .update-list {
+            list-style: none;
+            padding: 0;
+        }
+
+            .update-list li {
+                padding: 0.8rem 0;
+                border-bottom: 1px solid rgba(57, 255, 20, 0.2);
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                font-size: 1.1rem;
+            }
+
+                .update-list li:last-child {
+                    border-bottom: none;
+                }
+
+        .update-icon {
+            font-size: 1.5rem;
+            min-width: 30px;
+        }
+
+        /* About Section */
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            line-height: 2;
+            text-align: center;
+            color: var(--light-gray);
+        }
+
+            .about-content p {
+                margin-bottom: 1.5rem;
+            }
+
+        /* Screenshots Section */
+        .screenshots-section {
+            background: var(--pure-black);
+        }
+
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .screenshot-item {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--dark-green);
+            transition: all 0.3s ease;
+            aspect-ratio: 16/9;
+            cursor: zoom-in;
+        }
+
+            .screenshot-item img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+                filter: brightness(0.8);
+            }
+
+            .screenshot-item:hover img {
+                transform: scale(1.05);
+                filter: brightness(1);
+            }
+
+            .screenshot-item::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(180deg, transparent 60%, rgba(57, 255, 20, 0.3) 100%);
+                pointer-events: none;
+            }
+
+            .screenshot-item:hover {
+                border-color: var(--toxic-green);
+                box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
+            }
+
+        /* Image Zoom Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            cursor: zoom-out;
+        }
+
+            .image-modal.active {
+                display: flex;
+            }
+
+            .image-modal img {
+                max-width: 95%;
+                max-height: 95%;
+                object-fit: contain;
+                box-shadow: 0 0 50px rgba(57, 255, 20, 0.5);
+                border: 3px solid var(--toxic-green);
+            }
+
+        .image-modal-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 3rem;
+            color: var(--toxic-green);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10001;
+        }
+
+            .image-modal-close:hover {
+                color: var(--white);
+                transform: scale(1.2);
+            }
+
+        /* Gameplay Section */
+        .gameplay-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .gameplay-card {
+            background: var(--gray);
+            padding: 2rem;
+            border: 1px solid var(--dark-green);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .gameplay-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.2), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .gameplay-card:hover::before {
+                left: 100%;
+            }
+
+            .gameplay-card:hover {
+                transform: translateY(-10px);
+                border-color: var(--toxic-green);
+                box-shadow: 0 10px 30px rgba(57, 255, 20, 0.3);
+            }
+
+            .gameplay-card h3 {
+                color: var(--toxic-green);
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                letter-spacing: 2px;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .gameplay-card p {
+                color: var(--light-gray);
+                line-height: 1.8;
+            }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-top: 4rem;
+        }
+
+        .team-member {
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+            .team-member:hover {
+                transform: scale(1.05);
+            }
+
+        .member-photo {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            border: 3px solid var(--toxic-green);
+            background: var(--gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: var(--toxic-green);
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+        }
+
+            .member-photo img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+        .team-member h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .team-member p {
+            color: var(--light-gray);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            color: var(--light-gray);
+            margin: 0 0.5rem;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+            .social-links a:hover {
+                color: var(--toxic-green);
+            }
+
+        /* Features Section */
+        .features-list {
+            max-width: 800px;
+            margin: 3rem auto;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--gray);
+            border-left: 4px solid var(--toxic-green);
+            transition: all 0.3s ease;
+        }
+
+            .feature-item:hover {
+                background: var(--off-black);
+                transform: translateX(10px);
+            }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-right: 1.5rem;
+            color: var(--toxic-green);
+        }
+
+        .feature-text h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .feature-text p {
+            color: var(--light-gray);
+        }
+
+        /* Social Media Section */
+        .social-media-grid {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .social-card {
+            background: linear-gradient(135deg, var(--gray) 0%, var(--off-black) 100%);
+            padding: 3rem 2.5rem;
+            border: 2px solid var(--dark-green);
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--white);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 300px;
+            max-width: 400px;
+            cursor: pointer;
+        }
+
+            .social-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.2), transparent);
+                transition: left 0.5s ease;
+            }
+
+            .social-card:hover::before {
+                left: 100%;
+            }
+
+            .social-card:hover {
+                transform: translateY(-15px) scale(1.05);
+                border-color: var(--toxic-green);
+                box-shadow: 0 15px 40px rgba(57, 255, 20, 0.4);
+            }
+
+        .instagram-card:hover {
+            background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
+        }
+
+        .social-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .social-card h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--toxic-green);
+            letter-spacing: 2px;
+        }
+
+        .instagram-card:hover h3 {
+            color: var(--white);
+        }
+
+        .social-card p {
+            font-size: 1rem;
+            color: var(--light-gray);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .instagram-card:hover p {
+            color: var(--white);
+        }
+
+        .social-handle {
+            display: inline-block;
+            background: var(--toxic-green);
+            color: var(--pure-black);
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .instagram-card:hover .social-handle {
+            background: var(--white);
+            color: #833ab4;
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--pure-black);
+            padding: 3rem 10%;
+            text-align: center;
+            border-top: 1px solid var(--dark-green);
+        }
+
+            footer p {
+                color: var(--light-gray);
+                margin-bottom: 1rem;
+            }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+            .footer-links a {
+                color: var(--light-gray);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+
+                .footer-links a:hover {
+                    color: var(--toxic-green);
+                }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .modal.active {
+                display: flex;
+            }
+
+        .modal-content {
+            background: var(--off-black);
+            padding: 3rem;
+            border: 2px solid var(--toxic-green);
+            text-align: center;
+            max-width: 500px;
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-content h3 {
+            font-size: 2rem;
+            color: var(--toxic-green);
+            margin-bottom: 1rem;
+            letter-spacing: 3px;
+        }
+
+        .modal-content p {
+            font-size: 1.2rem;
+            color: var(--light-gray);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .modal-close {
+            background: var(--toxic-green);
+            border: none;
+            color: var(--pure-black);
+            padding: 1rem 2rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+            .modal-close:hover {
+                background: var(--dark-green);
+                color: var(--toxic-green);
+                box-shadow: 0 0 20px rgba(57, 255, 20, 0.6);
+            }
+
+        .privacy-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.8;
+            text-align: left;
+        }
+
+            .privacy-content h3 {
+                color: var(--toxic-green);
+                font-size: 1.8rem;
+                margin: 2rem 0 1rem 0;
+            }
+
+            .privacy-content p {
+                color: var(--light-gray);
+                margin-bottom: 1rem;
+            }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+            .fade-in.visible {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        /* Mobile and Tablet Layout */
+        @media (max-width: 1024px) {
+            nav ul {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .screenshots-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .game-title-banner {
+                top: 70px;
+                padding: 0.6rem 1.5rem;
+            }
+
+                .game-title-banner h1 {
+                    font-size: 1.5rem;
+                }
+
+            .game-subtitle {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cta-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                padding: 0.8rem 2rem;
+                font-size: 0.9rem;
+            }
+
+            .main-logo {
+                
+                max-width: 600px;
+                width: 85%;
+            }
+
+            h2 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .section-emoji {
+                font-size: 2rem;
+            }
+
+            .tagline {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+
+            section {
+                padding: 5rem 5%;
+            }
+
+            .game-title-banner {
+                top: 65px;
+                padding: 0.5rem 1rem;
+            }
+
+                .game-title-banner h1 {
+                    font-size: 1.2rem;
+                }
+
+            .game-subtitle {
+                font-size: 0.7rem;
+            }
+
+            .update-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .update-content h3 {
+                font-size: 1.3rem;
+            }
+
+            .social-media-grid {
+                gap: 2rem;
+            }
+
+            .social-card {
+                min-width: 250px;
+                padding: 2rem 1.5rem;
+            }
+
+            .social-icon {
+                font-size: 3rem;
+            }
+
+            .social-card h3 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tagline {
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+            }
+
+            h2 {
+                font-size: 1.6rem;
+            }
+
+            .game-title-banner {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+        <div class="loading-text">LOADING...</div>
+    </div>
+
+    <!-- Game Title Banner -->
+    <div class="game-title-banner">
+        <h1>⚡ STORM Z ⚡</h1>
+        <p class="game-subtitle">THE APOCALYPSE</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul>
+            <li><a href="#home" data-en="🏠 Home" data-sr="🏠 Početna"><span class="nav-emoji">🏠</span>Home</a></li>
+            <li><a href="#updates" data-en="🔥 Updates" data-sr="🔥 Ažuriranja"><span class="nav-emoji">🔥</span>Updates</a></li>
+            <li><a href="#about" data-en="📖 About" data-sr="📖 O Igri"><span class="nav-emoji">📖</span>About</a></li>
+            <li><a href="#screenshots" data-en="📸 Screenshots" data-sr="📸 Screenshot-ovi"><span class="nav-emoji">📸</span>Screenshots</a></li>
+            <li><a href="#gameplay" data-en="🎮 Gameplay" data-sr="🎮 Gameplay"><span class="nav-emoji">🎮</span>Gameplay</a></li>
+            <li><a href="#team" data-en="👥 Team" data-sr="👥 Tim"><span class="nav-emoji">👥</span>Team</a></li>
+            <li><a href="#social" data-en="📱 Social" data-sr="📱 Društvene Mreže"><span class="nav-emoji">📱</span>Social</a></li>
+        </ul>
+        <div class="language-switcher">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="sr">SR</button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <ul>
+            <li><a href="#home" data-en="🏠 Home" data-sr="🏠 Početna" onclick="toggleMenu()"><span class="nav-emoji">🏠</span>Home</a></li>
+            <li><a href="#updates" data-en="🔥 Updates" data-sr="🔥 Ažuriranja" onclick="toggleMenu()"><span class="nav-emoji">🔥</span>Updates</a></li>
+            <li><a href="#about" data-en="📖 About" data-sr="📖 O Igri" onclick="toggleMenu()"><span class="nav-emoji">📖</span>About</a></li>
+            <li><a href="#screenshots" data-en="📸 Screenshots" data-sr="📸 Screenshot-ovi" onclick="toggleMenu()"><span class="nav-emoji">📸</span>Screenshots</a></li>
+            <li><a href="#gameplay" data-en="🎮 Gameplay" data-sr="🎮 Gameplay" onclick="toggleMenu()"><span class="nav-emoji">🎮</span>Gameplay</a></li>
+            <li><a href="#team" data-en="👥 Team" data-sr="👥 Tim" onclick="toggleMenu()"><span class="nav-emoji">👥</span>Team</a></li>
+            <li><a href="#social" data-en="📱 Social" data-sr="📱 Društvene Mreže" onclick="toggleMenu()"><span class="nav-emoji">📱</span>Social</a></li>
+        </ul>
+        <div class="mobile-lang">
+            <button class="lang-btn active" data-lang="en" onclick="switchLanguageAndClose('en')">EN</button>
+            <button class="lang-btn" data-lang="sr" onclick="switchLanguageAndClose('sr')">SR</button>
+        </div>
+    </div>
+
+    <!-- Steam Modal -->
+    <div class="modal" id="steamModal">
+        <div class="modal-content">
+            <h3>🎮 COMING SOON</h3>
+            <p data-en="Storm Z will be available on Steam soon. Stay tuned for the release date announcement!"
+               data-sr="Storm Z će uskoro biti dostupan na Steam-u. Pratite nas za najavu datuma izlaska!">
+                Storm Z will be available on Steam soon. Stay tuned for the release date announcement!
+            </p>
+            <button class="modal-close" onclick="closeSteamModal()">OK</button>
+        </div>
+    </div>
+
+    <!-- Image Zoom Modal -->
+    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+        <span class="image-modal-close" onclick="closeImageModal()">✕</span>
+        <img id="modalImage" src="" alt="Zoomed screenshot">
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="logo-container">
+            <img src="images/logo.png" alt="Storm Z Logo" class="main-logo">
+            <p class="tagline" data-en="⚡ Survive the Waves. Fight the Horde. Become the Legend. ⚡"
+               data-sr="⚡ Preživi Talase. Bori se Protiv Horde. Postani Legenda. ⚡">
+                ⚡ Survive the Waves. Fight the Horde. Become the Legend. ⚡
+            </p>
+            <div class="cta-buttons">
+                <a href="https://lazar-markovic.itch.io/stormz" target="_blank" class="btn btn-primary" data-en="📥 Download Now" data-sr="📥 Preuzmi Igru">📥 Download Now</a>
+                <a href="#about" class="btn" data-en="📖 Discover More" data-sr="📖 Otkrij Više">📖 Discover More</a>
+                <a href="#" class="btn" onclick="openSteamModal(event)" data-en="🎮 Wishlist on Steam" data-sr="🎮 Dodaj na Wishlist">🎮 Wishlist on Steam</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Updates Section -->
+    <section id="updates">
+        <h2 class="fade-in"><span class="section-emoji">🔥</span><span data-en="What's New" data-sr="Šta Je Novo">What's New</span></h2>
+        <div class="updates-banner fade-in">
+            <div class="update-header">
+                <span class="update-badge">🆕 VERSION 2.0</span>
+            </div>
+            <div class="update-content">
+                <h3 data-en="⚡ Latest Updates" data-sr="⚡ Najnovija Ažuriranja">⚡ Latest Updates</h3>
+                <ul class="update-list">
+                    <li>
+                        <span class="update-icon">💣</span>
+                        <span data-en="New Enemy: Exploding Zombies - Watch out for the detonation!"
+                              data-sr="Novi Neprijatelj: Zombiji koji eksplodiraju - Čuvaj se detonacije!">
+                            New Enemy: Exploding Zombies - Watch out for the detonation!
+                        </span>
+                    </li>
+                    <li>
+                        <span class="update-icon">🛡️</span>
+                        <span data-en="New Enemy: Tank Zombies - High HP armored threats!"
+                              data-sr="Novi Neprijatelj: Tenk Zombiji - Visok HP i oklop!">
+                            New Enemy: Tank Zombies - High HP armored threats!
+                        </span>
+                    </li>
+                    <li>
+                        <span class="update-icon">⚙️</span>
+                        <span data-en="Performance Optimization - Smoother gameplay and better FPS"
+                              data-sr="Optimizacija Performansi - Glatkija igra i bolji FPS">
+                            Performance Optimization - Smoother gameplay and better FPS
+                        </span>
+                    </li>
+                    <li>
+                        <span class="update-icon">🎯</span>
+                        <span data-en="Improved AI Behavior - Smarter enemy tactics"
+                              data-sr="Poboljšana AI Inteligencija - Pametnije taktike neprijatelja">
+                            Improved AI Behavior - Smarter enemy tactics
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2 class="fade-in"><span class="section-emoji">📖</span><span data-en="About The Game" data-sr="O Igri">About The Game</span></h2>
+        <div class="about-content fade-in">
+            <p data-en="A secret military experiment gone wrong. Bio-agents turning soldiers into zombified warriors. One operative. No backup. Survive the waves or become part of the horde."
+               data-sr="Tajni vojni eksperiment pošao po zlu. Bio-agens pretvara vojnike u zombificirane ratnike. Jedan operativac. Nema pojačanja. Preživi talase ili postani deo horde.">
+                A secret military experiment gone wrong. Bio-agents turning soldiers into zombified warriors. One operative. No backup. Survive the waves or become part of the horde.
+            </p>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section id="screenshots" class="screenshots-section">
+        <h2 class="fade-in"><span class="section-emoji">📸</span><span data-en="Screenshots" data-sr="Screenshot-ovi">Screenshots</span></h2>
+        <div class="screenshots-grid">
+            <div class="screenshot-item fade-in" onclick="openImageModal('images/image1.png')">
+                <img src="images/image1.png" alt="Storm Z Gameplay 1">
+            </div>
+            
+            <div class="screenshot-item fade-in" onclick="openImageModal('images/a.jpg')">
+                <img src="images/a.jpg" alt="Storm Z Combat">
+            </div>
+            <div class="screenshot-item fade-in" onclick="openImageModal('images/b.jpg')">
+                <img src="images/b.jpg" alt="Storm Z Action">
+            </div>
+        </div>
+    </section>
+
+    <!-- Gameplay Section -->
+    <section id="gameplay">
+        <h2 class="fade-in"><span class="section-emoji">🎮</span><span data-en="Gameplay" data-sr="Gameplay">Gameplay</span></h2>
+        <div class="gameplay-grid">
+            <div class="gameplay-card fade-in">
+                <h3 data-en="🎯 Top-Down Combat" data-sr="🎯 Top-Down Borba"><span>🎯</span>Top-Down Combat</h3>
+                <p data-en="Tactical bird's-eye view combat. Independent movement and aiming for dynamic action."
+                   data-sr="Taktička ptičja perspektiva. Nezavisno kretanje i nišanjenje za dinamičnu akciju.">
+                    Tactical bird's-eye view combat. Independent movement and aiming for dynamic action.
+                </p>
+            </div>
+            <div class="gameplay-card fade-in">
+                <h3 data-en="🌊 Wave System" data-sr="🌊 Sistem Talasa"><span>🌊</span>Wave System</h3>
+                <p data-en="Survive increasingly challenging waves. Each brings more enemies and intensity."
+                   data-sr="Preživi sve izazovnije talase. Svaki donosi više neprijatelja i intenziteta.">
+                    Survive increasingly challenging waves. Each brings more enemies and intensity.
+                </p>
+            </div>
+            <div class="gameplay-card fade-in">
+                <h3 data-en="🎯 Ammo Management" data-sr="🎯 Upravljanje Municijom"><span>🎯</span>Ammo Management</h3>
+                <p data-en="Limited ammunition. Every shot counts. Scavenge from fallen enemies."
+                   data-sr="Ograničena municija. Svaki metak je bitan. Sakupljaj sa palih neprijatelja.">
+                    Limited ammunition. Every shot counts. Scavenge from fallen enemies.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team">
+        <h2 class="fade-in"><span class="section-emoji">👥</span><span data-en="Meet The Team" data-sr="Upoznajte Tim">Meet The Team</span></h2>
+        <div class="team-grid">
+            <div class="team-member fade-in">
+                <div class="member-photo">
+                    <img src="images/jovan.jpg" alt="Jovan Milošević">
+                </div>
+                <h3>Jovan Milošević</h3>
+                <p data-en="💻 Web Developer" data-sr="💻 Web Developer">💻 Web Developer</p>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/jovan-milosevic-86923b35b/" target="_blank">LinkedIn</a>
+                    <a href="https://jovanmilosevicc4.github.io/" target="_blank">Portfolio</a>
+                </div>
+            </div>
+            <div class="team-member fade-in">
+                <div class="member-photo">💼</div>
+                <h3>Mihajlo Milčić</h3>
+                <p data-en="💼 Business Manager" data-sr="💼 Biznis Menadžer">💼 Business Manager</p>
+                <div class="social-links">
+                    <a href="https://mihajlomilcic.netlify.app/" target="_blank">Portfolio</a>
+                </div>
+            </div>
+            <div class="team-member fade-in">
+                <div class="member-photo">⚙️</div>
+                <h3>Lazar Marković</h3>
+                <p data-en="⚙️ Game Programmer" data-sr="⚙️ Programer Igre">⚙️ Game Programmer</p>
+                <div class="social-links">
+                    <a href="https://programiranje.netlify.app/" target="_blank">Portfolio</a>
+                </div>
+            </div>
+            <div class="team-member fade-in">
+                <div class="member-photo">🎨</div>
+                <h3>Luka Stanojković</h3>
+                <p data-en="🎨 Game Designer" data-sr="🎨 Dizajner Igre">🎨 Game Designer</p>
+                <div class="social-links">
+                    <a href="https://lukastanojkovic.netlify.app/" target="_blank">Portfolio</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section id="social" style="background: var(--off-black);">
+        <h2 class="fade-in"><span class="section-emoji">📱</span><span data-en="Stay Connected" data-sr="Ostanite Povezani">Stay Connected</span></h2>
+        <div class="about-content fade-in" style="text-align: center; margin-bottom: 3rem;">
+            <p data-en="Follow us on social media for the latest updates, news, behind-the-scenes content, and community events!"
+               data-sr="Pratite nas na društvenim mrežama za najnovija ažuriranja, vesti, sadržaj iza kulisa i događaje u zajednici!">
+                Follow us on social media for the latest updates, news, behind-the-scenes content, and community events!
+            </p>
+        </div>
+        <div class="social-media-grid fade-in">
+            <a href="https://www.instagram.com/stormz_game/" target="_blank" class="social-card instagram-card">
+                <div class="social-icon">📸</div>
+                <h3>Instagram</h3>
+                <p data-en="Latest screenshots, game updates & community highlights"
+                   data-sr="Najnoviji screenshot-ovi, ažuriranja igre i istaknuti sadržaji zajednice">
+                    Latest screenshots, game updates & community highlights
+                </p>
+                <span class="social-handle">@stormz_game</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p data-en="&copy; 2025 Storm Z - The Apocalypse. All Rights Reserved." data-sr="&copy; 2025 Storm Z - The Apocalypse. Sva prava zadržana.">&copy; 2025 Storm Z - The Apocalypse. All Rights Reserved.</p>
+        <p data-en="Developed by an independent team of passionate creators." data-sr="Razvijen od strane nezavisnog tima strastvenih kreatora.">Developed by an independent team of passionate creators.</p>
+        <div class="footer-links">
+            <a href="javascript:void(0)" onclick="showPrivacyPolicy()" data-en="📄 Privacy Policy" data-sr="📄 Politika Privatnosti">📄 Privacy Policy</a>
+            <a href="/cdn-cgi/l/email-protection#d1a2a5bea3bcabe3e1e3e791b6bcb0b8bdffb2bebc" data-en="✉️ Contact" data-sr="✉️ Kontakt">✉️ Contact</a>
+        </div>
+    </footer>
+
+    <!-- Privacy Policy Modal -->
+    <div class="modal" id="privacyModal">
+        <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
+            <h3 data-en="Privacy Policy" data-sr="Politika Privatnosti">Privacy Policy</h3>
+            <div class="privacy-content">
+                <p data-en="Last updated: February 02, 2025" data-sr="Poslednje ažurirano: 02. februar 2025">Last updated: February 02, 2025</p>
+
+                <h3 data-en="Introduction" data-sr="Uvod">Introduction</h3>
+                <p data-en="Welcome to the Storm Z website. We respect your privacy and are committed to protecting your personal data."
+                   data-sr="Dobrodošli na sajt Storm Z. Poštujemo vašu privatnost i posvećeni smo zaštiti vaših ličnih podataka.">
+                    Welcome to the Storm Z website. We respect your privacy and are committed to protecting your personal data.
+                </p>
+
+                <h3 data-en="Contact Information" data-sr="Kontakt Informacije">Contact Information</h3>
+                <p data-en="If you contact us via email at stormz2026@gmail.com, we will only use your email address to respond to your inquiry."
+                   data-sr="Ako nas kontaktirate putem email-a na stormz2026@gmail.com, koristićemo vašu email adresu samo da odgovorimo na vaš upit.">
+                    If you contact us via email at <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9eedeaf1ecf3e4acaeaca8def9f3fff7f2b0fdf1f3">[email&#160;protected]</a>, we will only use your email address to respond to your inquiry.
+                </p>
+
+                <h3 data-en="Contact Us" data-sr="Kontaktirajte Nas">Contact Us</h3>
+                <p data-en="If you have any questions, please contact us at: stormz2026@gmail.com"
+                   data-sr="Ako imate bilo kakvih pitanja, kontaktirajte nas na: stormz2026@gmail.com">
+                    If you have any questions, please contact us at: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3241465d405f480002000472555f535b5e1c515d5f">[email&#160;protected]</a>
+                </p>
+            </div>
+            <button class="modal-close" onclick="closePrivacyModal()" data-en="Close" data-sr="Zatvori">Close</button>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
+        // Loading screen - hide quickly
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }, 500);
+        });
+
+        // Backup: Force remove loading screen after 2 seconds
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+                loadingScreen.classList.add('hidden');
+            }
+        }, 2000);
+
+        // Steam Modal
+        function openSteamModal(e) {
+            e.preventDefault();
+            document.getElementById('steamModal').classList.add('active');
+        }
+
+        function closeSteamModal() {
+            document.getElementById('steamModal').classList.remove('active');
+        }
+
+        // Privacy Policy Modal
+        function showPrivacyPolicy() {
+            document.getElementById('privacyModal').classList.add('active');
+        }
+
+        function closePrivacyModal() {
+            document.getElementById('privacyModal').classList.remove('active');
+        }
+
+        // Image Zoom Modal
+        function openImageModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.classList.add('active');
+            modalImg.src = imageSrc;
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modals on outside click
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Parallax effect on hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const heroBg = document.querySelector('.hero-bg');
+            if (heroBg && scrolled < window.innerHeight) {
+                heroBg.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Language Switcher
+        let currentLang = 'en';
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+
+            document.querySelectorAll('[data-en]').forEach(element => {
+                const text = element.getAttribute(`data-${lang}`);
+                if (text) {
+                    if (element.innerHTML.includes('<span')) {
+                        // Skip elements with nested spans (nav items)
+                        const spans = element.querySelectorAll('span');
+                        if (spans.length > 0) {
+                            // Only update text nodes, not emoji spans
+                            const textNode = Array.from(element.childNodes).find(node => node.nodeType === 3);
+                            if (textNode) {
+                                textNode.textContent = text.replace(/[🏠📖📸🎮👥🔥📥💻💼⚙️🎨📄✉️⚡]/g, '').trim();
+                            }
+                        }
+                    } else {
+                        element.textContent = text;
+                    }
+                }
+            });
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                }
+            });
+
+            localStorage.setItem('preferredLanguage', lang);
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.getAttribute('data-lang');
+                switchLanguage(lang);
+            });
+        });
+
+        const savedLang = localStorage.getItem('preferredLanguage');
+        if (savedLang) {
+            switchLanguage(savedLang);
+        }
+
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuOverlay = document.getElementById('menuOverlay');
+
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+
+            if (mobileMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        function switchLanguageAndClose(lang) {
+            switchLanguage(lang);
+            toggleMenu();
+        }
+    </script>
+</body>
+</html>
