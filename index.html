@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="sr">
 <head>
     <meta charset="UTF-8">
@@ -143,7 +143,6 @@
 
         /* Navigation */
         nav {
-            
             position: fixed;
             top: 0;
             width: 100%;
@@ -361,7 +360,6 @@
             position: relative;
             overflow: hidden;
             background: var(--pure-black);
-            padding-bottom: 300px;
         }
 
         .hero-bg {
@@ -427,10 +425,9 @@
         }
 
         .main-logo {
-            margin-top: 450px;
             max-width: 800px;
-            width: 80%;
-            height: 400px;
+            width: 100%;
+            height: auto;
             filter: drop-shadow(0 0 40px rgba(57, 255, 20, 0.9)) drop-shadow(0 10px 30px rgba(0, 0, 0, 0.8));
             animation: logoFloat 3s ease-in-out infinite;
             transition: all 0.3s ease;
@@ -958,6 +955,10 @@
             background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%);
         }
 
+        .youtube-card:hover {
+            background: linear-gradient(135deg, #FF0000 0%, #282828 100%);
+        }
+
         .social-icon {
             font-size: 4rem;
             margin-bottom: 1.5rem;
@@ -985,6 +986,10 @@
             color: var(--white);
         }
 
+        .youtube-card:hover h3 {
+            color: var(--white);
+        }
+
         .social-card p {
             font-size: 1rem;
             color: var(--light-gray);
@@ -993,6 +998,10 @@
         }
 
         .instagram-card:hover p {
+            color: var(--white);
+        }
+
+        .youtube-card:hover p {
             color: var(--white);
         }
 
@@ -1011,6 +1020,12 @@
         .instagram-card:hover .social-handle {
             background: var(--white);
             color: #833ab4;
+            transform: scale(1.1);
+        }
+
+        .youtube-card:hover .social-handle {
+            background: var(--white);
+            color: #FF0000;
             transform: scale(1.1);
         }
 
@@ -1187,8 +1202,7 @@
             }
 
             .main-logo {
-                
-                max-width: 600px;
+                max-width: 500px;
                 width: 85%;
             }
 
@@ -1360,23 +1374,50 @@
         <h2 class="fade-in"><span class="section-emoji">🔥</span><span data-en="What's New" data-sr="Šta Je Novo">What's New</span></h2>
         <div class="updates-banner fade-in">
             <div class="update-header">
-                <span class="update-badge">🆕 VERSION 2.0</span>
+                <span class="update-badge">🆕 VERSION 4.0</span>
             </div>
             <div class="update-content">
                 <h3 data-en="⚡ Latest Updates" data-sr="⚡ Najnovija Ažuriranja">⚡ Latest Updates</h3>
+
+                <!-- Update Image -->
+                <div style="text-align: center; margin: 2rem 0;">
+                    <img src="images/Capture1.jpg" alt="Version 4.0 Update" style="max-width: 100%; border-radius: 10px; border: 2px solid var(--toxic-green); box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);">
+                </div>
+
                 <ul class="update-list">
                     <li>
-                        <span class="update-icon">💣</span>
-                        <span data-en="New Enemy: Exploding Zombies - Watch out for the detonation!"
-                              data-sr="Novi Neprijatelj: Zombiji koji eksplodiraju - Čuvaj se detonacije!">
-                            New Enemy: Exploding Zombies - Watch out for the detonation!
+                        <span class="update-icon">🔊</span>
+                        <span data-en="New Sound Effects - Enhanced audio experience!"
+                              data-sr="Novi Zvučni Efekti - Poboljšano audio iskustvo!">
+                            New Sound Effects - Enhanced audio experience!
                         </span>
                     </li>
                     <li>
-                        <span class="update-icon">🛡️</span>
-                        <span data-en="New Enemy: Tank Zombies - High HP armored threats!"
-                              data-sr="Novi Neprijatelj: Tenk Zombiji - Visok HP i oklop!">
-                            New Enemy: Tank Zombies - High HP armored threats!
+                        <span class="update-icon">🌊</span>
+                        <span data-en="More Waves - Extended gameplay with additional wave count!"
+                              data-sr="Više Talasa - Produžena igra sa dodatnim brojem talasa!">
+                            More Waves - Extended gameplay with additional wave count!
+                        </span>
+                    </li>
+                    <li>
+                        <span class="update-icon">🎯</span>
+                        <span data-en="Ammunition System - Complete ammo management overhaul!"
+                              data-sr="Sistem Municije - Potpuna obnova upravljanja municijom!">
+                            Ammunition System - Complete ammo management overhaul!
+                        </span>
+                    </li>
+                    <li>
+                        <span class="update-icon">📦</span>
+                        <span data-en="Ammo Crates - Collect ammo from supply drops!"
+                              data-sr="Kutije sa Municijom - Sakupljaj municiju iz sanduka!">
+                            Ammo Crates - Collect ammo from supply drops!
+                        </span>
+                    </li>
+                    <li>
+                        <span class="update-icon">✨</span>
+                        <span data-en="VFX Effects - Stunning visual effects added!"
+                              data-sr="VFX Efekti - Dodati zapanjujući vizuelni efekti!">
+                            VFX Effects - Stunning visual effects added!
                         </span>
                     </li>
                     <li>
@@ -1384,13 +1425,6 @@
                         <span data-en="Performance Optimization - Smoother gameplay and better FPS"
                               data-sr="Optimizacija Performansi - Glatkija igra i bolji FPS">
                             Performance Optimization - Smoother gameplay and better FPS
-                        </span>
-                    </li>
-                    <li>
-                        <span class="update-icon">🎯</span>
-                        <span data-en="Improved AI Behavior - Smarter enemy tactics"
-                              data-sr="Poboljšana AI Inteligencija - Pametnije taktike neprijatelja">
-                            Improved AI Behavior - Smarter enemy tactics
                         </span>
                     </li>
                 </ul>
@@ -1416,7 +1450,12 @@
             <div class="screenshot-item fade-in" onclick="openImageModal('images/image1.png')">
                 <img src="images/image1.png" alt="Storm Z Gameplay 1">
             </div>
-            
+            <div class="screenshot-item fade-in" onclick="openImageModal('images/image2.png')">
+                <img src="images/image2.png" alt="Storm Z Gameplay 2">
+            </div>
+            <div class="screenshot-item fade-in" onclick="openImageModal('images/image3.png')">
+                <img src="images/image3.png" alt="Storm Z Gameplay 3">
+            </div>
             <div class="screenshot-item fade-in" onclick="openImageModal('images/a.jpg')">
                 <img src="images/a.jpg" alt="Storm Z Combat">
             </div>
@@ -1514,6 +1553,16 @@
                     Latest screenshots, game updates & community highlights
                 </p>
                 <span class="social-handle">@stormz_game</span>
+            </a>
+
+            <a href="https://www.youtube.com/@StormZ-c3p" target="_blank" class="social-card youtube-card">
+                <div class="social-icon">🎬</div>
+                <h3>YouTube</h3>
+                <p data-en="Gameplay videos, trailers & dev updates"
+                   data-sr="Gameplay video snimci, trejleri i dev ažuriranja">
+                    Gameplay videos, trailers & dev updates
+                </p>
+                <span class="social-handle">@StormZ-c3p</span>
             </a>
         </div>
     </section>
@@ -1727,5 +1776,3 @@
     </script>
 </body>
 </html>
-
-
